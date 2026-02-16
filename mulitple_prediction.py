@@ -1,23 +1,43 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Feb  9 11:02:38 2026
-
+ 
 @author: Lab
 """
-
+ 
 import numpy as np
 import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
-
+ 
 # import model
 loan_model = pickle.load(open("loan_model.sav", 'rb'))
 heart_model = pickle.load(open("heartmodel.sav", 'rb'))
-
+ridingmowers_model = pickle.load(open("ridingmowers_model.sav", 'rb'))
+ 
 with st.sidebar:
     selected = option_menu('Loan and heart prediction',
-                            ['loan','heart'],
+                            ['loan','heart','RidingMowers'],
                             default_index=0)
+if(selected == 'RidingMowers'):
+    st.title("RidingMowers Prediction")
+    # input data
+    Income = st.text_input('Income')
+    LotSize = st.text_input('LotSize')
+ 
+    # predict
+    Riding_pred = ''
+    if st.button('RidingMowers Owner/nonOwner test'):
+        Riding_pred = ridingmowers_model.predict([[
+            float(Income),
+            float(LotSize),
+ 
+        ]])
+        if(Riding_pred[0]== 0):
+            Riding_pred = 'NonOwner'
+        else:
+            Riding_pred = 'Owner'
+    st.success(Riding_pred)
 if(selected == 'loan'):
     st.title("Loan Prediction")
     # input data
@@ -34,7 +54,7 @@ if(selected == 'loan'):
     cb_person_cred_hist_length = st.text_input('cb_person_cred_hist_length')
     credit_score = st.text_input('credit_score')
     previous_loan_defaults_on_file = st.text_input('previous_loan_defaults_on_file')
-
+ 
     # predict
     loan_accept = ''
     if st.button('Loan accept/not test'):
@@ -58,10 +78,9 @@ if(selected == 'loan'):
         else:
             loan_accept = 'Accept'
     st.success(loan_accept)
-
+ 
 if(selected == 'heart'):
     st.title("Heart Prediction")
-        
     age = st.text_input('age')
     sex = st.text_input('sex')
     cp = st.text_input('cp')
@@ -75,7 +94,6 @@ if(selected == 'heart'):
     slope = st.text_input('slope')
     ca = st.text_input('ca')
     thal = st.text_input('thal')
-    
     #predict
     heart_predict = ''
     if st.button('Heart Prediction'):
@@ -94,12 +112,8 @@ if(selected == 'heart'):
         float(ca),
         float(thal)
     ]])
-    
         if(heart_predict[0]== 0):
             heart_accept = 'not have heart Disease'
         else:
             heart_accept = 'You have heart Disease'
     st.success(heart_predict)
-
-    
-    
